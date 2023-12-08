@@ -69,7 +69,7 @@ void TIM2_IRQHandler()
 
 		timer_reset(TIM2);
 	}
-	inplace--;
+	inplace++;
 
 }
 /**
@@ -108,13 +108,26 @@ int main(void)
 	  		  // prevent overflow from inplace incrementing
 	  		  if (inplace > 1200) {
 	  			  inplace = 1200;
+	  			  if (!HAL_GPIO_ReadPin(BLE_INT_GPIO_Port,BLE_INT_Pin)) {
+	  				  ble_init();
+	  			  }
 	  		  }
 	  	  } else {
 	  		  inplace = 0;
+	  		  // when moving, disconnect from BLE peripheral
+	  		  if (HAL_GPIO_ReadPin(BLE_INT_GPIO_Port,BLE_INT_Pin)) {
+	  			  HAL_GPIO_WritePin(BLE_RESET_GPIO_Port,BLE_RESET_Pin,GPIO_PIN_RESET);
+	  			  HAL_Delay(10);
+	  			  HAL_GPIO_WritePin(BLE_RESET_GPIO_Port,BLE_RESET_Pin,GPIO_PIN_SET);
+	  		  }
 	  	  }
+
+
+
 	  //only send
 	  if(!standby && HAL_GPIO_ReadPin(BLE_INT_GPIO_Port,BLE_INT_Pin)){
 	    catchBLE();
+	    standby = 1;
 	  }else{
 		  HAL_Delay(1000);
 
@@ -123,7 +136,8 @@ int main(void)
 		  updateCharValue(NORDIC_UART_SERVICE_HANDLE, READ_CHAR_HANDLE, 0, sizeof(test_str)-1, test_str);
 	  }
 	  // Wait for interrupt, only uncomment if low power is needed
-	  //__WFI();
+	  __WFI();
+
   }
 }
 
