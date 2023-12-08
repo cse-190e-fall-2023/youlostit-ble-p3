@@ -69,7 +69,7 @@ void TIM2_IRQHandler()
 
 		timer_reset(TIM2);
 	}
-	inplace++;
+	inplace--;
 
 }
 /**
