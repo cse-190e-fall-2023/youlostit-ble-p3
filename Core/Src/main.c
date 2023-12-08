@@ -23,6 +23,31 @@
 
 #include <stdlib.h>
 
+#include <stdint.h>
+
+/* Include memory map of our MCU */
+#include <stm32l475xx.h>
+
+/* Include LED driver */
+#include "leds.h"
+
+/* Include Timer driver */
+#include "timer.h"
+
+#include "i2c.h"
+
+#include "lsm6dsl.h"
+
+#include "stdio.h"
+
+volatile uint32_t cnt = 0;
+volatile uint32_t led1 = 0;
+volatile uint32_t led2 = 0;
+volatile uint16_t inplace = 0;
+volatile int16_t x, y, z;
+uint32_t pattern1 = 0b010100100100;
+uint32_t pattern2 = 0b101000010001;
+
 int dataAvailable = 0;
 
 SPI_HandleTypeDef hspi3;
@@ -31,6 +56,22 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI3_Init(void);
 
+void TIM2_IRQHandler()
+{
+	if (inplace == 1200) {
+		led1 = (pattern1 >> (11-cnt)) & 1;
+		led2 = (pattern2 >> (11-cnt)) & 1;
+
+		leds_set((led2 << 1) + led1);
+
+		if (cnt == 11) {cnt = 0;}
+		else{cnt += 1;}
+
+		timer_reset(TIM2);
+	}
+	inplace++;
+
+}
 /**
   * @brief  The application entry point.
   * @retval int
@@ -60,10 +101,23 @@ int main(void)
 
   while (1)
   {
+
+	  // if lost
+	  lsm6dsl_read_xyz(&x,&y,&z);
+	  if (x < 1024 && x > -1024 && y < 1024 && y > -1024 && z < 1024 && z > -1024) {
+	  		  // prevent overflow from inplace incrementing
+	  		  if (inplace > 1200) {
+	  			  inplace = 1200;
+	  		  }
+	  	  } else {
+	  		  inplace = 0;
+	  	  }
+	  //only send
 	  if(!standby && HAL_GPIO_ReadPin(BLE_INT_GPIO_Port,BLE_INT_Pin)){
 	    catchBLE();
 	  }else{
 		  HAL_Delay(1000);
+
 		  // Send a string to the NORDIC UART service, remember to not include the newline
 		  unsigned char test_str[] = "youlostit BLE test";
 		  updateCharValue(NORDIC_UART_SERVICE_HANDLE, READ_CHAR_HANDLE, 0, sizeof(test_str)-1, test_str);
@@ -231,6 +285,8 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
+
+
 
 #ifdef  USE_FULL_ASSERT
 /**

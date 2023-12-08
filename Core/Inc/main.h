@@ -55,6 +55,8 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
+void TIM2_IRQHandler();
+
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

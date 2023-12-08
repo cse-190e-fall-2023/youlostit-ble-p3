@@ -15,7 +15,7 @@ extern SPI_HandleTypeDef hspi3;
 extern int dataAvailable;
 
 // Device name sent in BLE advertisement packets
-uint8_t deviceName[]={'F','U','N','C','S','E','1','9','0'};
+uint8_t deviceName[]={'F','U','N','1','9','0'};
 
 uint8_t buffer[255];
 
