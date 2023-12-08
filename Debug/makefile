@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := youlostit-ble-p3
+BUILD_ARTIFACT_NAME := youlostit-ble
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-youlostit-ble-p3.elf \
+youlostit-ble.elf \
 
 MAP_FILES += \
-youlostit-ble-p3.map \
+youlostit-ble.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-youlostit-ble-p3.list \
+youlostit-ble.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: youlostit-ble-p3.elf secondary-outputs
+main-build: youlostit-ble.elf secondary-outputs
 
 # Tool invocations
-youlostit-ble-p3.elf youlostit-ble-p3.map: $(OBJS) $(USER_OBJS) C:\Users\17142\Desktop\CSE190E\workspace_1.13.1\youlostit-ble-p3\STM32L475VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "youlostit-ble-p3.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\17142\Desktop\CSE190E\workspace_1.13.1\youlostit-ble-p3\STM32L475VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="youlostit-ble-p3.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+youlostit-ble.elf youlostit-ble.map: $(OBJS) $(USER_OBJS) /Users/doheon/STM32CubeIDE/workspace_1.13.4/youlostit-ble/STM32L475VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "youlostit-ble.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/doheon/STM32CubeIDE/workspace_1.13.4/youlostit-ble/STM32L475VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="youlostit-ble.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-youlostit-ble-p3.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "youlostit-ble-p3.list"
+youlostit-ble.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "youlostit-ble.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout youlostit-ble-p3.elf youlostit-ble-p3.list youlostit-ble-p3.map
+	-$(RM) default.size.stdout youlostit-ble.elf youlostit-ble.list youlostit-ble.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
